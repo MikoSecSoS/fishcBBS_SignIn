@@ -16,7 +16,8 @@ class SignIn(object):
 	"""docstring for SignIn"""
 
 	def signIn(self):
-		print("开始签到，当前时间:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+		nowTime = ("开始签到，当前时间:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+		print(nowTime)
 
 		startTime = time.time()
 		browser.get("https://fishc.com.cn/")
@@ -46,7 +47,10 @@ class SignIn(object):
 
 		if flag:
 			print("签到成功")
-			print("您的签到排名:", re.search("\d+", html[flag:flag+20]).group(0))
+			top = ("您的签到排名:", re.search("\d+", html[flag:flag+20]).group(0))
+			print(top)
+			with open("access.txt", "a+") as f:
+				f.write("[ " + nowTime + " ]\t" + top + "\r\n")
 		else:
 			print("签到失败")
 			with open("签到失败源码.txt", "w") as f:
