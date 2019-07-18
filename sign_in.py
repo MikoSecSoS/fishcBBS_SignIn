@@ -30,9 +30,12 @@ class SignIn(object):
 		except Exception as e:
 			print("当前为登录状态继续签到")
 		time.sleep(1.5)
-		# browser.get("https://fishc.com.cn/plugin.php?id=k_misign:sign")
-		# browser.find_element_by_xpath("//*[@id=\"JD_sign\"]").click() # 点击签到
-		browser.get("https://fishc.com.cn/plugin.php?id=k_misign:sign&operation=qiandao&formhash=74807941&format=empty")
+		browser.get("https://fishc.com.cn/plugin.php?id=k_misign:sign")
+		try:
+			browser.find_element_by_xpath("//*[@id=\"JD_sign\"]").click() # 点击签到
+		except Exception as e:
+			print("未登录")
+			return
 		print("打开判断签到页面成功...")
 		time.sleep(1)
 		browser.get("https://fishc.com.cn/plugin.php?id=k_misign:sign")
@@ -55,8 +58,10 @@ class SignIn(object):
 
 		useTime = endTime-startTime
 
+		print("[签到用时]", useTime)
+
 		try:
-			timer = threading.Timer(86400-useTime, self.SignIn)
+			timer = threading.Timer(86400-useTime, self.signIn)
 			timer.start()
 		except KeyboardInterrupt as e:
 			print("Bye~~~")
