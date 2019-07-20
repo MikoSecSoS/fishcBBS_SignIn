@@ -34,6 +34,7 @@ class SignIn(object):
 		except Exception as e:
 			print("当前为登录状态继续签到")
 		browser.get("https://fishc.com.cn/plugin.php?id=k_misign:sign")
+		WebDriverWait(browser,20,0.5).until(EC.presence_of_element_located((By.LINK_TEXT, "//*[@id=\"JD_sign\"]")))
 		try:
 			browser.find_element_by_xpath("//*[@id=\"JD_sign\"]").click() # 点击签到
 		except Exception as e:
