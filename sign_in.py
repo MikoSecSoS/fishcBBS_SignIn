@@ -11,39 +11,39 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC  
 from selenium.webdriver.common.by import By  
 
-browser = webdriver.PhantomJS()
-# browser = webdriver.Chrome()
+# browser = webdriver.PhantomJS()
+browser = webdriver.Chrome()
 
 
 class SignIn(object):
 	"""docstring for SignIn"""
 
 	def signIn(self):
-		nowTime = ("开始签到，当前时间:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-		print(nowTime)
+		nowTime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+		print("开始签到，当前时间:", nowTime)
 
 		startTime = time.time()
 		browser.get("https://fishc.com.cn/")
 		print("打开论坛成功...")
-		WebDriverWait(browser,20,0.5).until(EC.presence_of_element_located((By.LINK_TEXT, "//*[@id=\"ls_username\"]")))
 		try:
-			browser.find_element_by_xpath("//*[@id=\"ls_username\"]").send_keys(self.username)
-			browser.find_element_by_xpath("//*[@id=\"ls_password\"]").send_keys(self.password)
+			WebDriverWait(browser,20).until(lambda x: x.find_element_by_xpath("//*[@id=\"ls_username\"]")).send_keys(self.username)
+			WebDriverWait(browser,20).until(lambda x: x.find_element_by_xpath("//*[@id=\"ls_password\"]")).send_keys(self.password)
 			browser.find_element_by_xpath("//*[@id=\"lsform\"]/div/div[1]/table/tbody/tr[2]/td[3]/button/em").click()
 			print("输入账密完成...")
+			time.sleep(10)
 		except Exception as e:
+			print(e)
 			print("当前为登录状态继续签到")
 		browser.get("https://fishc.com.cn/plugin.php?id=k_misign:sign")
-		WebDriverWait(browser,20,0.5).until(EC.presence_of_element_located((By.LINK_TEXT, "//*[@id=\"JD_sign\"]")))
 		try:
-			browser.find_element_by_xpath("//*[@id=\"JD_sign\"]").click() # 点击签到
+			WebDriverWait(browser,20,0.5).until(lambda x: x.find_element_by_xpath("//*[@id=\"JD_sign\"]")).click()
 		except Exception as e:
 			print("未登录")
 			return
 		print("打开判断签到页面成功...")
 		browser.get("https://fishc.com.cn/plugin.php?id=k_misign:sign")
 		print("获取签到排名...")
-		html = browser.find_element_by_xpath("//*").get_attribute("outerHTML")
+		html = WebDriverWait(browser,20).until(lambda x: x.find_element_by_xpath("//*")).get_attribute("outerHTML")
 
 		flag = html.find("您的签到排名")
 
@@ -97,6 +97,8 @@ def main():
 	signin = SignIn()
 
 	signin.loadConfig()
+
+	signin.signIn()
 
 	timer = threading.Timer(timer_start_time, signin.signIn)
 	timer.start()
