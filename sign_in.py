@@ -7,6 +7,9 @@ import threading
 import configparser
 
 from selenium import webdriver
+from selenium.webdriver.support.wait import WebDriverWait  
+from selenium.webdriver.support import expected_conditions as EC  
+from selenium.webdriver.common.by import By  
 
 browser = webdriver.PhantomJS()
 # browser = webdriver.Chrome()
@@ -22,7 +25,7 @@ class SignIn(object):
 		startTime = time.time()
 		browser.get("https://fishc.com.cn/")
 		print("打开论坛成功...")
-		time.sleep(1)
+		WebDriverWait(browser,20,0.5).until(EC.presence_of_element_located((By.LINK_TEXT, "//*[@id=\"ls_username\"]")))
 		try:
 			browser.find_element_by_xpath("//*[@id=\"ls_username\"]").send_keys(self.username)
 			browser.find_element_by_xpath("//*[@id=\"ls_password\"]").send_keys(self.password)
@@ -30,7 +33,6 @@ class SignIn(object):
 			print("输入账密完成...")
 		except Exception as e:
 			print("当前为登录状态继续签到")
-		time.sleep(1.5)
 		browser.get("https://fishc.com.cn/plugin.php?id=k_misign:sign")
 		try:
 			browser.find_element_by_xpath("//*[@id=\"JD_sign\"]").click() # 点击签到
@@ -38,7 +40,6 @@ class SignIn(object):
 			print("未登录")
 			return
 		print("打开判断签到页面成功...")
-		time.sleep(1)
 		browser.get("https://fishc.com.cn/plugin.php?id=k_misign:sign")
 		print("获取签到排名...")
 		html = browser.find_element_by_xpath("//*").get_attribute("outerHTML")
