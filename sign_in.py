@@ -24,7 +24,6 @@ class SignIn(object):
 
 		startTime = time.time()
 		browser.get("https://fishc.com.cn/")
-		print("打开论坛成功...")
 		try:
 			WebDriverWait(browser,10).until(lambda x: x.find_element_by_xpath("//*[@id=\"ls_username\"]")).send_keys(self.username)
 			WebDriverWait(browser,10).until(lambda x: x.find_element_by_xpath("//*[@id=\"ls_password\"]")).send_keys(self.password)
@@ -32,22 +31,22 @@ class SignIn(object):
 			print("输入账密完成...")
 			time.sleep(1)
 		except Exception as e:
-			print(e)
 			print("当前为登录状态")
+
 		browser.get("https://fishc.com.cn/plugin.php?id=k_misign:sign")
 		try:
-			WebDriverWait(browser,10).until(lambda x: x.find_element_by_xpath("//*[@id=\"JD_sign\"]")).click()
+			WebDriverWait(browser,5).until(lambda x: x.find_element_by_xpath("//*[@id=\"JD_sign\"]")).click()
 			print("签到成功...")
 			time.sleep(1)
 		except Exception as e:
 			print("未登录或已签到")
-		print("获取签到排名...")
-		html = browser.find_element_by_xpath("//*").get_attribute("outerHTML")
+
+		html = WebDriverWait(browser,5).until(lambda x: x.find_element_by_xpath("//*[@id=\"wp\"]/div[2]/div[1]/div[1]/div/div[1]")).get_attribute("outerHTML")
 
 		flag = html.find("您的签到排名")
 
 		if flag:
-			top = "您的签到排名: " + re.search("\d+", html[flag:flag+20]).group(0)
+			top = "您的签到排名: " + re.search("\d+", html).group(0)
 			print(top)
 			with open("access.txt", "a+") as f:
 				f.write("[ " + nowTime + " ]\t" + top + "\r\n")
